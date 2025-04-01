@@ -7,4 +7,5 @@ requires-python = ">=3.9.21"
 license = "MIT"
 dependencies = [
     "django==4.2.11",
+    "requests==2.32.0",
 ]
