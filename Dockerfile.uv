@@ -15,10 +15,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pip requirements
-ADD requirements.txt .
-RUN python -m pip install --upgrade pip && \
-    python -m pip install -r requirements.txt
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy the project into the container
 ADD . /app
@@ -28,10 +26,14 @@ WORKDIR /app
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
+# Sync the project into a new environment, using the frozen lockfile
+RUN uv sync --frozen
+
 EXPOSE 8000
 
 ENV INSTANA_DEBUG=True
 ENV INSTANA_SERVICE_NAME=simple-django-pvital
 
 # Run the application
+ENTRYPOINT ["uv", "run"]
 CMD ["uwsgi", "--ini", "uwsgi.ini", "--http", "0.0.0.0:8000"]
