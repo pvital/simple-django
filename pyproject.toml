@@ -8,4 +8,5 @@ license = "MIT"
 dependencies = [
     "django==4.2.11",
     "requests==2.32.0",
+    "uwsgi==2.0.24",
 ]
